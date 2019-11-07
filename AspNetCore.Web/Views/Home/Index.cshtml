@@ -1,16 +1,66 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
 <div>
-    <input type="file" multiple id="file" />
+    <input type="button" id="fromform" value="Form传参" /><hr />
+    <input type="button" id="frombody" value="Body传参" /><hr />
+    <input type="file" multiple id="file" name="上传文件" /><hr />
 </div>
 <script src="https://cdn.bootcss.com/jquery/3.3.0/jquery.js"></script>
 <script>
+
+    /**
+     * FromForm
+     * */
+    var fromform = document.getElementById("fromform");
+    $(fromform).click(function () {
+        var url = 'http://localhost:9001/API/Default/FormCall';
+        var model = { name: "刘大大", age: 23, sex: true };
+        $.ajax({
+            url: url,
+            type: "POST",
+            async: true,
+            data: model,
+            contentType: "application/x-www-form-urlencoded",
+            success: function (data) {
+                console.log(data);
+                alert(JSON.stringify(data));
+            },
+            error: function (result) {
+                console.log(result);
+            }
+        });
+    });
+
+    /**
+     * FromBody
+     * */
+    $('#frombody').click(function () {
+        var url = 'http://localhost:9001/API/Default/BodyCall';
+        var json = '{"name":"刘大大","age":23,"sex":true}';
+        $.ajax({
+            url: url,
+            type: "POST",
+            async: true,
+            data: json,
+            contentType: "application/json",
+            success: function (data) {
+                console.log(data);
+                alert(JSON.stringify(data));
+            },
+            error: function (result) {
+                console.log(result);
+            }
+        });
+    });
+
+    /**
+     * FormData
+     * */
     var file = document.getElementById("file");
     file.onchange = function () {
         var file = document.getElementById("file");
@@ -20,14 +70,6 @@
             formData.append(files[i].name, files[i]);
         }
         formData.append("name", "刘大大");
-
-        //From传参
-        //contentType: "application/x-www-form-urlencoded",
-        //var model = { name: "刘大大", age: 23, sex: true };
-        //Body传参
-        //contentType: "application/json",
-        //var json = "{ 'name': '刘大大', 'age': 23, 'sex': true }";
-
         var isUploadByJs = true;
         var url = isUploadByJs ? 'http://localhost:9001/API/Default/Upload' : 'http://localhost:9002/Home/Upload';
         $.ajax({
@@ -38,9 +80,16 @@
             data: formData,
             contentType: false, //必须false才会避开jQuery对 formdata 的默认处理
             processData: false, //必须false才会自动加上正确的Content-Type
+            headers: { ReadTime: Date.now() },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Author', 'liudada');
+            },
             success: function (data) {
                 console.log(data);
                 alert(JSON.stringify(data));
+            },
+            error: function (result) {
+                console.log(result);
             }
         });
     }

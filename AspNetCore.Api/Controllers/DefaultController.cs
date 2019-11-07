@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -33,9 +34,19 @@ namespace AspNetCore.Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult<UserInfo> GetUser([FromBody]UserInfo user)
+        public ActionResult<UserInfo> FormCall([FromForm]UserInfo user)
         {
-            return new JsonResult(user);
+            return new JsonResult($"FromForm Response {JsonSerializer.Serialize(user)}");
+        }
+
+        /// <summary>
+        /// API GET
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult<UserInfo> BodyCall([FromBody]UserInfo user)
+        {
+            return new JsonResult($"FromBody Response {JsonSerializer.Serialize(user)}");
         }
 
         /// <summary>
