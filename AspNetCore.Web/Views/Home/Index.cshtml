@@ -8,7 +8,8 @@
 <div>
     <input type="button" id="fromform" value="Form传参" /><hr />
     <input type="button" id="frombody" value="Body传参" /><hr />
-    <input type="file" multiple id="file" name="上传文件" /><hr />
+    <input type="file" multiple id="file1" value="jQuery上传文件" />jQuery上传文件<hr />
+    <input type="file" multiple id="file2" value="C#上传文件" />C#上传文件<hr />
 </div>
 <script src="https://cdn.bootcss.com/jquery/3.3.0/jquery.js"></script>
 <script>
@@ -59,19 +60,17 @@
     });
 
     /**
-     * FormData
+     * FormData jQuery上传文件
      * */
-    var file = document.getElementById("file");
-    file.onchange = function () {
-        var file = document.getElementById("file");
-        var files = file.files;
+    var file1 = document.getElementById("file1");
+    file1.onchange = function () {
+        var files = file1.files;
         var formData = new FormData();
         for (var i = 0; i < files.length; i++) {
             formData.append(files[i].name, files[i]);
         }
         formData.append("name", "刘大大");
-        var isUploadByJs = true;
-        var url = isUploadByJs ? 'http://localhost:9001/API/Default/Upload' : 'http://localhost:9002/Home/Upload';
+        var url = 'http://localhost:9001/API/Default/Upload';
         $.ajax({
             url: url,
             type: "POST",
@@ -92,5 +91,39 @@
                 console.log(result);
             }
         });
-    }
+    };
+
+    /**
+     * FormData C#上传文件
+     * */
+    var file2 = document.getElementById("file2");
+    file2.onchange = function () {
+        var files = file2.files;
+        var formData = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            formData.append(files[i].name, files[i]);
+        }
+        formData.append("name", "刘大大");
+        var url = 'http://localhost:9002/Home/Upload';
+        $.ajax({
+            url: url,
+            type: "POST",
+            async: true,
+            dataType: "json",
+            data: formData,
+            contentType: false, //必须false才会避开jQuery对 formdata 的默认处理
+            processData: false, //必须false才会自动加上正确的Content-Type
+            headers: { ReadTime: Date.now() },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Author', 'liudada');
+            },
+            success: function (data) {
+                console.log(data);
+                alert(JSON.stringify(data));
+            },
+            error: function (result) {
+                console.log(result);
+            }
+        });
+    };
 </script>
